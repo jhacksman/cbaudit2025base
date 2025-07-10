@@ -8,68 +8,94 @@
 - **Maximum Reward**: $5,000,000
 - **Focus**: Onchain Bug Bounty Program for smart contracts
 
+The Coinbase Onchain Bug Bounty Program targets vulnerabilities in deployed smart contracts for Coinbase's on-chain products. It emphasizes production-use contracts on mainnets, with rewards scaled by severity and tier. Off-chain issues should be reported via HackerOne instead.
+
+## Key Objectives
+- Identify vulnerabilities like reentrancy, privilege escalation, arithmetic errors, gas inefficiencies, and more
+- Ensure reports include reproduction steps, impact, and fixes
+- Testing must occur in local/private environments—no mainnet or public testnet exploitation
+
 ## Reward Structure
 
-### Tier 0 - Critical Vulnerabilities
-- **Reward**: Up to $5,000,000
-- **Scope**: Base, cbBTC, and cbETH
+Rewards are discretionary, based on report quality, exploitability, and impact/likelihood.
 
-### Tier 1 - High Vulnerabilities  
-- **Reward**: Up to $500,000
-- **Scope**: Everything not in Tier 0 (all other mainnet contracts deployed by Coinbase)
+| Tier | Contracts | Critical (Max) | High (Max) | Medium (Max) | Low (Max) |
+|------|-----------|----------------|------------|--------------|-----------|
+| Tier 0 | Base, cbBTC, cbETH | $5,000,000 | $500,000 | $50,000 | $5,000 (discretionary) |
+| Tier 1 | All other mainnet contracts deployed by Coinbase for production products | $500,000 | $50,000 | $5,000 | $500 (discretionary) |
 
-### Additional Tiers
-- **Medium**: Up to $50,000
-- **Low**: Up to $5,000
-- **Informational**: Discretionary
+### Severity Classification
+- **Critical**: Immediate threat (e.g., fund theft, permanent DoS)
+- **High**: Significant risk with conditions (e.g., reentrancy leading to loss)
+- **Medium**: Moderate impact (e.g., temporary DoS)
+- **Low**: Minor issues (e.g., gas optimizations)
+- **Informational**: No reward, but useful insights
 
 ## Tier 0 Assets (Critical Priority)
 
-### 1. Base Network
-**Description**: An L2 that rolls up to Ethereum (L1)
-**Documentation**: https://docs.base.org/base-chain/network-information/base-contracts
-**Scope**: L2 & L1 mainnet addresses as specified in documentation
+Focus on smart contracts deployed by Coinbase with production use-cases on mainnets. Below are key Tier 0 assets with addresses and purposes.
 
-#### Key Base Contracts (L2 - Base Mainnet)
-- **SystemConfig**: 0x73a79Fab69143498Ed3712e519A88a918e1f4072
-- **L2OutputOracle**: 0x56315b90c40730925ec5485cf004d835058518A0
-- **OptimismPortal**: 0x49048044D57e1C92A77f79988d21Fa8fAF74E97e
-- **L1CrossDomainMessenger**: 0x866E82a600A1414e583f7F13623F1aC5d58b0Afa
-- **L1StandardBridge**: 0x3154Cf16ccdb4C6d922629664174b904d80F2C35
-- **OptimismMintableERC20Factory**: 0x05cc379EBD9B30BbA19C6fA282AB29218EC61D84
-- **L1ERC721Bridge**: 0x608d94945A64503E642E6370Ec598e519a2C1E53
+### 1. cbETH (Coinbase Wrapped Staked ETH)
 
-#### Key Base Contracts (L1 - Ethereum Mainnet)
-- **AddressManager**: 0x8EfB6B5c4767B09Dc9AA6Af4eAA89F749522BaE2
-- **ProxyAdmin**: 0x0475cBCAebd9CE8AfA5025828d5b98DFb67E059E
-- **SystemConfig**: 0x73a79Fab69143498Ed3712e519A88a918e1f4072
-- **OptimismPortal**: 0x49048044D57e1C92A77f79988d21Fa8fAF74E97e
-- **L2OutputOracle**: 0x56315b90c40730925ec5485cf004d835058518A0
+**Description**: Represents ETH staked through Coinbase, with a floating exchange rate. It's an ERC20 token backed 1:1 by staked ETH reserves.
+
+**Networks**: Ethereum Mainnet, Base Mainnet, Optimism
+
+**Key Contracts**:
+
+| Contract Type | Address | Purpose | Source |
+|---------------|---------|---------|--------|
+| Proxy (Ethereum) | 0xbe9895146f7af43049ca1c1ae358b0541ea49704 | Upgradeable proxy for token logic | Verified on Etherscan (FiatTokenProxy) |
+| Implementation (Ethereum) | 0x31724ca0c982a31fbb5c57f4217ab585271fc9a5 | Core logic (StakedTokenV1: inherits from FiatTokenV2_1, adds oracle for exchange rate updates) | Verified on Etherscan |
+| Proxy (Optimism) | 0xaddb6a0412de1ba0f936dcaeb8aaa24578dcf3b2 | Optimism deployment | Verified on Optimistic Etherscan |
+| Proxy (Base) | 0x2ae3f1ec7f1f5012cfeab0185bfc7aa3cf0dec22 | Base deployment | Verified on BaseScan |
+
+**Functionality Summary**: Mint/burn via minters, blacklist support, exchange rate oracle for staking rewards. Based on Centre's FiatToken with extensions.
 
 ### 2. cbBTC (Coinbase Wrapped BTC)
-**Description**: Wrapped BTC, backed 1:1 by Bitcoin (BTC) held by Coinbase
-**Documentation**: https://www.coinbase.com/blog/coinbase-wrapped-btc-cbbtc-is-now-live
 
-#### cbBTC Contract Addresses
-- **Base**: 0xcbb7c0000ab88b473b1f5afd9ef808440eed33bf
-- **Ethereum**: 0xcbb7c0000ab88b473b1f5afd9ef808440eed33bf
-- **Arbitrum**: 0xcbB7C0000aB88B473b1f5aFd9ef808440eed33Bf
-- **Solana**: cbbtcf3aa214zXHbiAZQwf4122FBYbraNdFqgw4iMij
+**Description**: ERC20 token backed 1:1 by Bitcoin held by Coinbase, compatible with DeFi.
 
-### 3. cbETH (Coinbase Wrapped Staked ETH)
-**Description**: Wrapped staked ETH that represents ETH staked through Coinbase
-**Documentation**: https://www.coinbase.com/price/coinbase-wrapped-staked-eth
+**Networks**: Ethereum Mainnet, Base Mainnet, Solana (note: Solana may require separate tools for audit)
 
-#### cbETH Contract Addresses
-- **Ethereum**: 0xBe9895146f7AF43049ca1c1AE358B0541Ea49704
-- **Arbitrum**: 0x1DEBd73E752bEaF79865Fd6446b0c970EaE7732f
-- **Optimism**: 0xadDb6A0412DE1BA0F936DCaeb8Aaa24578dcF3B2
-- **Polygon**: 0x4b4327dB1600B8B1440163F667e199CEf35385f5
-- **Base**: 0x2Ae3F1Ec7F1F5012CFEab0185bfc7aa3cf0DEc22
+**Key Contracts**:
+
+| Contract Type | Address | Purpose | Source |
+|---------------|---------|---------|--------|
+| Proxy (Ethereum) | 0xcbb7c0000ab88b473b1f5afd9ef808440eed33bf | Upgradeable proxy | Verified on Etherscan (FiatTokenProxy) |
+| Implementation (Ethereum) | 0x7458bfdc30034eb860b265e6068121d18fa5aa72 | Core logic (FiatTokenV2_1: ERC20 with minting, burning, blacklisting) | Verified on Etherscan |
+| Proxy (Base) | 0xcbb7c0000ab88b473b1f5afd9ef808440eed33bf | Base deployment | Verified on BaseScan |
+| Solana Contract | cbbtcf3aa214zXHbiAZQwf4122FBYbraNdFqgw4iMij | Solana deployment (SPL token) | Not EVM; audit via Solana tools |
+
+**Functionality Summary**: Standard ERC20 with rate-limited minting, no floating exchange rate (fixed 1:1).
+
+### 3. Base (L2 Rollup)
+
+**Description**: Ethereum L2 using Optimism's OP Stack for scaling, with rollups to Ethereum L1.
+
+**Networks**: Base Mainnet (L2), Ethereum Mainnet (L1 contracts)
+
+**Key Contracts** (from Base docs; all deployed by Coinbase or Optimism under Coinbase incubation):
+
+| Name | Address (L1 unless noted) | Purpose |
+|------|--------------------------------|---------|
+| OptimismPortal | 0x49048044D57e1C92A77f79988d21Fa8fAF74E97e | Entry point for deposits/withdrawals between L1 and L2 |
+| L2OutputOracle | 0x56315b90dC61def39dcdf92c5ac048FF29F771DB | Oracle for L2 state outputs on L1 |
+| SystemConfig | 0x73a79Fab691434f2a4AC4b8b1b425f700b92a56A | Configures system parameters like gas limits |
+| L1StandardBridge | 0x3154Cf16ccdb4C6d922629664174bAF68eb54570 | Bridges standard tokens from L1 to L2 |
+| L1CrossDomainMessenger | 0x866E82a60037fedB8Cb9aa00261E2Df0918ddd48 | Messaging between L1 and L2 |
+| L1ERC721Bridge | 0x6085AeBD3a0eda6d3A5a8Be4176dcc49c5510570 | Bridges ERC721 tokens from L1 to L2 |
+| WETH9 (L2) | 0x4200000000000000000000000000000000000006 | Wrapped ETH on L2 |
+| L2StandardBridge (L2) | 0x4200000000000000000000000000000000000010 | L2 side of token bridging |
+| L2CrossDomainMessenger (L2) | 0x4200000000000000000000000000000000000007 | L2 messaging to L1 |
+| ProxyAdmin (L2) | 0x4200000000000000000000000000000000000018 | Manages proxy upgrades on L2 |
+
+**Functionality Summary**: Optimistic rollup for cheap/fast transactions, with fraud proofs via L1 oracles. Audit for rollup integrity, bridge security, and config access control.
 
 ## Tier 1 Assets
 
-**Scope**: All mainnet contracts associated with products not in Tier 0 that are deployed by Coinbase
+**Scope**: Any other Coinbase-deployed mainnet contracts (e.g., smart wallet at GitHub coinbase/smart-wallet, or appchains). Search Etherscan for "coinbase" deployer to identify.
+
 **Networks**: Ethereum, Arbitrum, Optimism, Polygon, Base, and any other networks where Coinbase has deployed contracts
 
 ## Networks in Scope
@@ -87,12 +113,16 @@
 1. **Bridge Security**: L1/L2 bridge contracts and cross-chain messaging
 2. **System Contracts**: Core infrastructure contracts (SystemConfig, OutputOracle, Portal)
 3. **Token Bridges**: ERC20 and ERC721 bridge implementations
+4. **Rollup Integrity**: Fraud proofs and state validation
+5. **Configuration Access Control**: System parameter management
 
 ### Token Contract Priorities
 1. **Access Control**: Admin functions and privilege escalation
 2. **Minting/Burning**: Token supply management mechanisms
 3. **Cross-chain Functionality**: Multi-network deployment consistency
 4. **Staking Mechanisms**: cbETH staking and reward distribution
+5. **Oracle Integration**: Exchange rate updates and validation
+6. **Proxy Patterns**: Upgradeable contract security
 
 ### General Smart Contract Vulnerabilities
 1. **Reentrancy**: State manipulation through external calls
@@ -100,14 +130,24 @@
 3. **Access Control**: Unauthorized function execution
 4. **Logic Errors**: Business logic flaws
 5. **Economic Attacks**: MEV and economic manipulation
+6. **Gas Inefficiencies**: Optimization opportunities
+7. **Proxy Vulnerabilities**: Implementation and storage collisions
 
 ## Out of Scope
 
-- Testnet contracts (unless specifically mentioned)
-- Frontend applications and web interfaces
-- Infrastructure not directly related to smart contracts
-- Social engineering attacks
-- Physical security
+- Off-chain components (report to HackerOne)
+- Non-production contracts or proofs-of-concept
+- Public testnets/mainnet testing without authorization
+- Previously known vulnerabilities
+- Social engineering, DoS beyond PoC, or malicious exploitation
+- Contracts not deployed by Coinbase
+
+## Rules and Guidelines
+
+- Submit via Cantina within 24 hours of discovery
+- No public disclosure until fixed
+- Must be first reporter; comply with laws (no sanctioned countries)
+- Ineligible: Current/former Coinbase employees or code contributors
 
 ## Submission Requirements
 
@@ -115,3 +155,4 @@
 - Proof of concept required for all findings
 - Clear impact assessment and remediation suggestions
 - Follow responsible disclosure practices
+- Include reproduction steps and fix recommendations
